@@ -1,3 +1,3 @@
-window.onload = function() {
-    window.location.reload();
-};
+//window.onload = function() {
+//    window.location.reload();
+//};
