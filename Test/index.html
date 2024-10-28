@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Jumping Game</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .container {
+            display: flex;
+            flex: 1;
+        }
+
+        .column {
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+
+        .side-column {
+            flex: 1;
+        }
+
+        .middle-column {
+            flex: 3;
+            background-color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #game-container {
+            width: 600px;
+            height: 200px;
+            border: 2px solid black;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #player {
+            width: 30px;
+            height: 30px;
+            background-color: blue;
+            position: absolute;
+            bottom: 0;
+            left: 50px;
+        }
+
+        .obstacle {
+            width: 20px;
+            height: 40px;
+            background-color: red;
+            position: absolute;
+            bottom: 0;
+            right: 0;
+        }
+
+        footer {
+            background-color: #333;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Jumping Game</h1>
+    </header>
+
+    <div class="container">
+        <div class="column side-column">Left Column</div>
+        <div class="column middle-column">
+            <h2>Press Space to Jump!</h2>
+            <div id="game-container">
+                <div id="player"></div>
+            </div>
+            <p>Score: <span id="score">0</span></p>
+        </div>
+        <div class="column side-column">Right Column</div>
+    </div>
+
+    <footer>
+        <p>Footer Content</p>
+    </footer>
+
+    <script>
+        const player = document.getElementById('player');
+        const gameContainer = document.getElementById('game-container');
+        const scoreElement = document.getElementById('score');
+
+        let isJumping = false;
+        let score = 0;
+        let gameLoop;
+        let obstacleLoop;
+        let isGameOver = false;
+
+        function jump() {
+            if (!isJumping && !isGameOver) {
+                isJumping = true;
+                let position = 0;
+                let upInterval = setInterval(() => {
+                    if (position >= 100) {
+                        clearInterval(upInterval);
+                        let downInterval = setInterval(() => {
+                            if (position <= 0) {
+                                clearInterval(downInterval);
+                                isJumping = false;
+                            }
+                            position -= 3;
+                            player.style.bottom = position + 'px';
+                        }, 20);
+                    }
+                    position += 3;
+                    player.style.bottom = position + 'px';
+                }, 20);
+            }
+        }
+
+        function createObstacle() {
+            if (!isGameOver) {
+                const obstacle = document.createElement('div');
+                obstacle.classList.add('obstacle');
+                gameContainer.appendChild(obstacle);
+
+                let position = 600;
+                let moveInterval = setInterval(() => {
+                    if (position < -20) {
+                        clearInterval(moveInterval);
+                        gameContainer.removeChild(obstacle);
+                        score++;
+                        scoreElement.textContent = score;
+                    } else {
+                        position -= 5;
+                        obstacle.style.right = (600 - position) + 'px';
+
+                        // Collision detection
+                        const playerRect = player.getBoundingClientRect();
+                        const obstacleRect = obstacle.getBoundingClientRect();
+
+                        if (
+                            playerRect.right > obstacleRect.left &&
+                            playerRect.left < obstacleRect.right &&
+                            playerRect.bottom > obstacleRect.top
+                        ) {
+                            gameOver();
+                        }
+                    }
+                }, 20);
+            }
+        }
+
+        function gameOver() {
+            isGameOver = true;
+            clearInterval(obstacleLoop);
+            alert('Game Over! Score: ' + score);
+        }
+
+        // Event listener for spacebar
+        document.addEventListener('keydown', (event) => {
+            if (event.code === 'Space') {
+                event.preventDefault();
+                jump();
+            }
+        });
+
+        // Start generating obstacles
+        obstacleLoop = setInterval(createObstacle, 2000); // New obstacle every 2 seconds
+    </script>
+</body>
+</html>
