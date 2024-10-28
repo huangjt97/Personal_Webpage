@@ -1,51 +1,45 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jumping Game</title>
     <style>
         body {
             margin: 0;
             padding: 0;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
             font-family: Arial, sans-serif;
         }
 
         header {
             background-color: #333;
             color: white;
-            padding: 1rem;
             text-align: center;
+            padding: 1em;
         }
 
         .container {
             display: flex;
-            flex: 1;
-        }
-
-        .column {
-            padding: 1rem;
-            background-color: #f0f0f0;
+            min-height: 70vh;
         }
 
         .side-column {
             flex: 1;
+            background-color: #f0f0f0;
+            padding: 1em;
         }
 
         .middle-column {
-            flex: 3;
-            background-color: white;
+            flex: 6;
+            padding: 1em;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         #game-container {
             width: 600px;
             height: 200px;
-            margin: 0 auto;
-            position: relative;
             border: 2px solid #333;
+            position: relative;
             overflow: hidden;
         }
 
@@ -70,8 +64,15 @@
         footer {
             background-color: #333;
             color: white;
-            padding: 1rem;
             text-align: center;
+            padding: 1em;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        #score {
+            margin-top: 1em;
         }
     </style>
 </head>
@@ -81,20 +82,20 @@
     </header>
 
     <div class="container">
-        <div class="column side-column">
+        <div class="side-column">
             <h2>Left Column</h2>
             <p>Content goes here...</p>
         </div>
-        
-        <div class="column middle-column">
+
+        <div class="middle-column">
             <div id="game-container">
                 <div id="player"></div>
             </div>
+            <div id="score">Score: <span id="score-value">0</span></div>
             <p>Press spacebar to jump!</p>
-            <p>Score: <span id="score">0</span></p>
         </div>
-        
-        <div class="column side-column">
+
+        <div class="side-column">
             <h2>Right Column</h2>
             <p>Content goes here...</p>
         </div>
@@ -107,85 +108,85 @@
     <script>
         const player = document.getElementById('player');
         const gameContainer = document.getElementById('game-container');
-        const scoreElement = document.getElementById('score');
-        
+        const scoreElement = document.getElementById('score-value');
+
         let isJumping = false;
         let score = 0;
-        let gameLoop;
-        let obstacleInterval;
+        let gameOver = false;
 
+        // Jump mechanics
         function jump() {
-            if (!isJumping) {
+            if (!isJumping && !gameOver) {
                 isJumping = true;
                 let position = 0;
-                let upInterval = setInterval(() => {
+                let jumpInterval = setInterval(() => {
                     if (position >= 100) {
-                        clearInterval(upInterval);
-                        let downInterval = setInterval(() => {
-                            if (position <= 0) {
-                                clearInterval(downInterval);
-                                isJumping = false;
-                            }
-                            position -= 3;
-                            player.style.bottom = position + 'px';
-                        }, 20);
+                        // Coming down
+                        position -= 5;
+                        player.style.bottom = position + 'px';
+                    } else if (position <= 0) {
+                        // Reached ground
+                        clearInterval(jumpInterval);
+                        isJumping = false;
+                        player.style.bottom = '0px';
+                    } else {
+                        // Going up
+                        position += 5;
+                        player.style.bottom = position + 'px';
                     }
-                    position += 3;
-                    player.style.bottom = position + 'px';
                 }, 20);
             }
         }
 
+        // Obstacle generation and movement
         function createObstacle() {
-            const obstacle = document.createElement('div');
-            obstacle.classList.add('obstacle');
-            gameContainer.appendChild(obstacle);
+            if (!gameOver) {
+                const obstacle = document.createElement('div');
+                obstacle.classList.add('obstacle');
+                gameContainer.appendChild(obstacle);
 
-            let position = 600;
-            let moveInterval = setInterval(() => {
-                if (position < -20) {
-                    clearInterval(moveInterval);
-                    obstacle.remove();
-                    score++;
-                    scoreElement.textContent = score;
-                }
+                let position = 600;
+                let obstacleInterval = setInterval(() => {
+                    if (position < -20) {
+                        clearInterval(obstacleInterval);
+                        gameContainer.removeChild(obstacle);
+                        score++;
+                        scoreElement.textContent = score;
+                    } else {
+                        position -= 5;
+                        obstacle.style.right = (600 - position) + 'px';
 
-                const playerRect = player.getBoundingClientRect();
-                const obstacleRect = obstacle.getBoundingClientRect();
+                        // Collision detection
+                        const playerRect = player.getBoundingClientRect();
+                        const obstacleRect = obstacle.getBoundingClientRect();
 
-                if (
-                    playerRect.left < obstacleRect.right &&
-                    playerRect.right > obstacleRect.left &&
-                    playerRect.top < obstacleRect.bottom &&
-                    playerRect.bottom > obstacleRect.top
-                ) {
-                    clearInterval(moveInterval);
-                    clearInterval(obstacleInterval);
-                    alert('Game Over! Score: ' + score);
-                    location.reload();
-                }
-
-                position -= 5;
-                obstacle.style.right = -position + 'px';
-            }, 20);
+                        if (
+                            playerRect.right > obstacleRect.left &&
+                            playerRect.left < obstacleRect.right &&
+                            playerRect.bottom > obstacleRect.top
+                        ) {
+                            gameOver = true;
+                            alert('Game Over! Score: ' + score);
+                            location.reload();
+                        }
+                    }
+                }, 20);
+            }
         }
 
+        // Generate obstacles randomly
+        setInterval(() => {
+            const randomDelay = Math.random() * 1000 + 1000; // Random delay between 1-2 seconds
+            setTimeout(createObstacle, randomDelay);
+        }, 2000);
+
+        // Event listener for spacebar
         document.addEventListener('keydown', (event) => {
             if (event.code === 'Space') {
                 event.preventDefault();
                 jump();
             }
         });
-
-        // Generate obstacles with random intervals (between 1.5 and 3 seconds)
-        function startGame() {
-            obstacleInterval = setInterval(() => {
-                const delay = Math.random() * 1500 + 1500; // Random delay between 1.5 and 3 seconds
-                setTimeout(createObstacle, delay);
-            }, 3000);
-        }
-
-        startGame();
     </script>
 </body>
 </html>
