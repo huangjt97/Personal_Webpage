@@ -1,40 +1,35 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jump Game</title>
+    <title>Jumping Game</title>
     <style>
         body {
             margin: 0;
             padding: 0;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
             font-family: Arial, sans-serif;
         }
 
         header {
             background-color: #333;
             color: white;
-            padding: 1rem;
             text-align: center;
+            padding: 1em;
         }
 
         .container {
             display: flex;
-            flex: 1;
+            min-height: 70vh;
         }
 
         .side-column {
             flex: 1;
             background-color: #f0f0f0;
-            padding: 1rem;
+            padding: 1em;
         }
 
-        .main-column {
-            flex: 3;
-            padding: 1rem;
+        .middle-column {
+            flex: 6;
+            padding: 1em;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -69,67 +64,81 @@
         footer {
             background-color: #333;
             color: white;
-            padding: 1rem;
             text-align: center;
+            padding: 1em;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
         }
 
         #score {
-            margin-top: 1rem;
-            font-size: 1.2rem;
+            margin-top: 1em;
         }
     </style>
 </head>
 <body>
     <header>
-        <h1>Jump Game</h1>
+        <h1>Jumping Game</h1>
     </header>
 
     <div class="container">
-        <div class="side-column">Left Column</div>
-        <div class="main-column">
+        <div class="side-column">
+            <h2>Left Column</h2>
+            <p>Content goes here...</p>
+        </div>
+
+        <div class="middle-column">
             <div id="game-container">
                 <div id="player"></div>
             </div>
-            <div id="score">Score: 0</div>
+            <div id="score">Score: <span id="score-value">0</span></div>
+            <p>Press spacebar to jump!</p>
         </div>
-        <div class="side-column">Right Column</div>
+
+        <div class="side-column">
+            <h2>Right Column</h2>
+            <p>Content goes here...</p>
+        </div>
     </div>
 
     <footer>
-        <p>Footer Content</p>
+        <p>Footer content goes here...</p>
     </footer>
 
     <script>
         const player = document.getElementById('player');
         const gameContainer = document.getElementById('game-container');
-        const scoreElement = document.getElementById('score');
+        const scoreElement = document.getElementById('score-value');
 
         let isJumping = false;
         let score = 0;
         let gameOver = false;
 
+        // Jump mechanics
         function jump() {
             if (!isJumping && !gameOver) {
                 isJumping = true;
                 let position = 0;
-                let upInterval = setInterval(() => {
+                let jumpInterval = setInterval(() => {
                     if (position >= 100) {
-                        clearInterval(upInterval);
-                        let downInterval = setInterval(() => {
-                            if (position <= 0) {
-                                clearInterval(downInterval);
-                                isJumping = false;
-                            }
-                            position -= 3;
-                            player.style.bottom = position + 'px';
-                        }, 20);
+                        // Coming down
+                        position -= 5;
+                        player.style.bottom = position + 'px';
+                    } else if (position <= 0) {
+                        // Reached ground
+                        clearInterval(jumpInterval);
+                        isJumping = false;
+                        player.style.bottom = '0px';
+                    } else {
+                        // Going up
+                        position += 5;
+                        player.style.bottom = position + 'px';
                     }
-                    position += 3;
-                    player.style.bottom = position + 'px';
                 }, 20);
             }
         }
 
+        // Obstacle generation and movement
         function createObstacle() {
             if (!gameOver) {
                 const obstacle = document.createElement('div');
@@ -137,42 +146,47 @@
                 gameContainer.appendChild(obstacle);
 
                 let position = 600;
-                let moveInterval = setInterval(() => {
+                let obstacleInterval = setInterval(() => {
                     if (position < -20) {
-                        clearInterval(moveInterval);
+                        clearInterval(obstacleInterval);
                         gameContainer.removeChild(obstacle);
                         score++;
-                        scoreElement.textContent = `Score: ${score}`;
-                    } else if (
-                        position > 30 && position < 90 &&
-                        parseInt(player.style.bottom) < 40
-                    ) {
-                        clearInterval(moveInterval);
-                        gameOver = true;
-                        alert('Game Over! Score: ' + score);
+                        scoreElement.textContent = score;
+                    } else {
+                        position -= 5;
+                        obstacle.style.right = (600 - position) + 'px';
+
+                        // Collision detection
+                        const playerRect = player.getBoundingClientRect();
+                        const obstacleRect = obstacle.getBoundingClientRect();
+
+                        if (
+                            playerRect.right > obstacleRect.left &&
+                            playerRect.left < obstacleRect.right &&
+                            playerRect.bottom > obstacleRect.top
+                        ) {
+                            gameOver = true;
+                            alert('Game Over! Score: ' + score);
+                            location.reload();
+                        }
                     }
-                    position -= 5;
-                    obstacle.style.right = `-${position}px`;
                 }, 20);
             }
         }
 
-        // Generate obstacles randomly with minimum 0.5s reaction time
-        function startGeneratingObstacles() {
-            setInterval(() => {
-                const randomDelay = Math.random() * 1000 + 500; // Random delay between 0.5s and 1.5s
-                setTimeout(createObstacle, randomDelay);
-            }, 2000);
-        }
+        // Generate obstacles randomly
+        setInterval(() => {
+            const randomDelay = Math.random() * 1000 + 1000; // Random delay between 1-2 seconds
+            setTimeout(createObstacle, randomDelay);
+        }, 2000);
 
+        // Event listener for spacebar
         document.addEventListener('keydown', (event) => {
             if (event.code === 'Space') {
                 event.preventDefault();
                 jump();
             }
         });
-
-        startGeneratingObstacles();
     </script>
 </body>
 </html>
