@@ -1,6 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jumping Game</title>
     <style>
         body {
@@ -9,12 +11,13 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            font-family: Arial, sans-serif;
         }
 
         header {
             background-color: #333;
             color: white;
-            padding: 20px;
+            padding: 1rem;
             text-align: center;
         }
 
@@ -24,7 +27,7 @@
         }
 
         .column {
-            padding: 20px;
+            padding: 1rem;
             background-color: #f0f0f0;
         }
 
@@ -35,23 +38,21 @@
         .middle-column {
             flex: 3;
             background-color: white;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
         }
 
         #game-container {
             width: 600px;
             height: 200px;
-            border: 2px solid black;
+            margin: 0 auto;
             position: relative;
+            border: 2px solid #333;
             overflow: hidden;
         }
 
         #player {
-            width: 30px;
-            height: 30px;
-            background-color: blue;
+            width: 40px;
+            height: 40px;
+            background-color: #333;
             position: absolute;
             bottom: 0;
             left: 50px;
@@ -69,7 +70,7 @@
         footer {
             background-color: #333;
             color: white;
-            padding: 20px;
+            padding: 1rem;
             text-align: center;
         }
     </style>
@@ -80,34 +81,41 @@
     </header>
 
     <div class="container">
-        <div class="column side-column">Left Column</div>
+        <div class="column side-column">
+            <h2>Left Column</h2>
+            <p>Content goes here...</p>
+        </div>
+        
         <div class="column middle-column">
-            <h2>Press Space to Jump!</h2>
             <div id="game-container">
                 <div id="player"></div>
             </div>
+            <p>Press spacebar to jump!</p>
             <p>Score: <span id="score">0</span></p>
         </div>
-        <div class="column side-column">Right Column</div>
+        
+        <div class="column side-column">
+            <h2>Right Column</h2>
+            <p>Content goes here...</p>
+        </div>
     </div>
 
     <footer>
-        <p>Footer Content</p>
+        <p>Footer content goes here...</p>
     </footer>
 
     <script>
         const player = document.getElementById('player');
         const gameContainer = document.getElementById('game-container');
         const scoreElement = document.getElementById('score');
-
+        
         let isJumping = false;
         let score = 0;
         let gameLoop;
-        let obstacleLoop;
-        let isGameOver = false;
+        let obstacleInterval;
 
         function jump() {
-            if (!isJumping && !isGameOver) {
+            if (!isJumping) {
                 isJumping = true;
                 let position = 0;
                 let upInterval = setInterval(() => {
@@ -129,45 +137,39 @@
         }
 
         function createObstacle() {
-            if (!isGameOver) {
-                const obstacle = document.createElement('div');
-                obstacle.classList.add('obstacle');
-                gameContainer.appendChild(obstacle);
+            const obstacle = document.createElement('div');
+            obstacle.classList.add('obstacle');
+            gameContainer.appendChild(obstacle);
 
-                let position = 600;
-                let moveInterval = setInterval(() => {
-                    if (position < -20) {
-                        clearInterval(moveInterval);
-                        gameContainer.removeChild(obstacle);
-                        score++;
-                        scoreElement.textContent = score;
-                    } else {
-                        position -= 5;
-                        obstacle.style.right = (600 - position) + 'px';
+            let position = 600;
+            let moveInterval = setInterval(() => {
+                if (position < -20) {
+                    clearInterval(moveInterval);
+                    obstacle.remove();
+                    score++;
+                    scoreElement.textContent = score;
+                }
 
-                        // Collision detection
-                        const playerRect = player.getBoundingClientRect();
-                        const obstacleRect = obstacle.getBoundingClientRect();
+                const playerRect = player.getBoundingClientRect();
+                const obstacleRect = obstacle.getBoundingClientRect();
 
-                        if (
-                            playerRect.right > obstacleRect.left &&
-                            playerRect.left < obstacleRect.right &&
-                            playerRect.bottom > obstacleRect.top
-                        ) {
-                            gameOver();
-                        }
-                    }
-                }, 20);
-            }
+                if (
+                    playerRect.left < obstacleRect.right &&
+                    playerRect.right > obstacleRect.left &&
+                    playerRect.top < obstacleRect.bottom &&
+                    playerRect.bottom > obstacleRect.top
+                ) {
+                    clearInterval(moveInterval);
+                    clearInterval(obstacleInterval);
+                    alert('Game Over! Score: ' + score);
+                    location.reload();
+                }
+
+                position -= 5;
+                obstacle.style.right = -position + 'px';
+            }, 20);
         }
 
-        function gameOver() {
-            isGameOver = true;
-            clearInterval(obstacleLoop);
-            alert('Game Over! Score: ' + score);
-        }
-
-        // Event listener for spacebar
         document.addEventListener('keydown', (event) => {
             if (event.code === 'Space') {
                 event.preventDefault();
@@ -175,8 +177,15 @@
             }
         });
 
-        // Start generating obstacles
-        obstacleLoop = setInterval(createObstacle, 2000); // New obstacle every 2 seconds
+        // Generate obstacles with random intervals (between 1.5 and 3 seconds)
+        function startGame() {
+            obstacleInterval = setInterval(() => {
+                const delay = Math.random() * 1500 + 1500; // Random delay between 1.5 and 3 seconds
+                setTimeout(createObstacle, delay);
+            }, 3000);
+        }
+
+        startGame();
     </script>
 </body>
 </html>
