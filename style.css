@@ -1,10 +1,10 @@
 *{
-    color: #412505;
+    color: #2b1702;
     font-family:Georgia;
 }
 
 body {
-    background-image: url('https://huangjt97.github.io/Personal_Webpage/Background.png');
+    background-image: url("https://huangjt97.github.io/Personal_Webpage/Background.png");
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;
@@ -29,12 +29,12 @@ body {
 .HeadColumn{
     flex: 100%;
     border-radius: 10px; 
-    background-color: #f0d8bd;
+    background-color: #9b774d;
 }
 
 .column {
     padding: 20px;
-    background-color: #f0d8bd;
+    background-color: #9b774d;
 }
 
 .side-column-left {
