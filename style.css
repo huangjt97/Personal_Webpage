@@ -1,23 +1,53 @@
+*{
+    color: #412505;
+    font-family:Georgia;
+}
+
+body {
+    background-image: url('C:\Users\genku\OneDrive\Desktop\Git\Personal_Webpage\Background.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    width: 100%; /* adjust as needed */
+    height: 100%; /* adjust as needed */
+}
+
+.HeadContainer {
+    display: flex;
+    padding: 20px;
+    opacity: 90%;
+}
+
 .container {
     display: flex;
     min-height: 100vh;
     gap: 20px;
     padding: 20px;
+    opacity: 90%;
+}
+
+.HeadColumn{
+    flex: 100%;
+    border-radius: 10px; 
+    background-color: #f0d8bd;
 }
 
 .column {
     padding: 20px;
-    background-color: #fafafa;
+    background-color: #f0d8bd;
 }
 
 .side-column-left {
     flex: 2;
+    border-radius: 10px; 
 }
 
 .middle-column {
     flex: 10;
+    border-radius: 10px; 
 }
 
 .side-column-right {
     flex: 3;
+    border-radius: 10px; 
 }
