@@ -3,4 +3,4 @@
 //};
 
 
-var LeetCode = document.get.ElementById("LeetCode").innerHTML = "LeetCode";
+//var LeetCode = document.get.ElementById("LeetCode").innerHTML = "LeetCode";
