@@ -15,7 +15,7 @@ body {
 .HeadContainer {
     display: flex;
     padding: 20px;
-    opacity: 80%;
+    opacity: 75%;
 }
 
 .container {
@@ -23,7 +23,7 @@ body {
     min-height: 100vh;
     gap: 20px;
     padding: 20px;
-    opacity: 80%;
+    opacity: 75%;
 }
 
 .HeadColumn{
