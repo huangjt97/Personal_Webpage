@@ -10,10 +10,14 @@
     background-color: #fafafa;
 }
 
-.side-column {
-    flex: 1;
+.side-column-left {
+    flex: 2;
 }
 
 .middle-column {
-    flex: 5;
+    flex: 10;
+}
+
+.side-column-right {
+    flex: 3;
 }
