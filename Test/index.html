@@ -1,194 +1,56 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE HTML>
+<html>
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jump Game</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            font-family: Arial, sans-serif;
-        }
-
-        header {
-            background-color: #333;
-            color: white;
-            padding: 1rem;
-            text-align: center;
-        }
-
-        .container {
-            display: flex;
-            flex: 1;
-        }
-
-        .side-column {
-            flex: 1;
-            background-color: #f0f0f0;
-            padding: 1rem;
-        }
-
-        .main-column {
-            flex: 3;
-            padding: 1rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        #game-container {
-            width: 600px;
-            height: 200px;
-            border: 2px solid #333;
-            position: relative;
-            overflow: hidden;
-            background-color: #fff;
-        }
-
-        #player {
-            width: 40px;
-            height: 40px;
-            background-color: #333;
-            position: absolute;
-            bottom: 0;
-            left: 50px;
-        }
-
-        .obstacle {
-            width: 20px;
-            height: 40px;
-            background-color: red;
-            position: absolute;
-            bottom: 0;
-        }
-
-        footer {
-            background-color: #333;
-            color: white;
-            padding: 1rem;
-            text-align: center;
-        }
-
-        #score {
-            margin-top: 1rem;
-            font-size: 1.2rem;
-        }
-    </style>
+    <title>
+        Using createElement and appendChild() Method
+    </title>
 </head>
-<body>
-    <header>
-        <h1>Jump Game</h1>
-    </header>
 
-    <div class="container">
-        <div class="side-column">Left Column</div>
-        <div class="main-column">
-            <div id="game-container">
-                <div id="player"></div>
-            </div>
-            <div id="score">Score: 0</div>
-        </div>
-        <div class="side-column">Right Column</div>
-    </div>
+<body style="text-align:center;">
 
-    <footer>
-        <p>Footer Content</p>
-    </footer>
+    <h1 style="color:green;">
+        GeeksForGeeks
+    </h1>
+
+    <p id="GFG_UP" style="font-size: 19px; font-weight: bold;">
+    </p>
+
+    <button onclick="GFG_Fun()">
+        click here
+    </button>
+
+    <p id="GFG_DOWN" style="color: green; font-size: 24px; font-weight: bold;">
+    </p>
 
     <script>
-        const player = document.getElementById('player');
-        const gameContainer = document.getElementById('game-container');
-        const scoreElement = document.getElementById('score');
+        let el_up = document.getElementById("GFG_UP");
+        let el_down = document.getElementById("GFG_DOWN");
 
-        let isJumping = false;
-        let score = 0;
-        let gameOver = false;
+        el_up.innerHTML = "Click on the button to generate "
+            + "a link using JavaScript.";
 
-        function jump() {
-            if (!isJumping && !gameOver) {
-                isJumping = true;
-                let position = 0;
-                let upInterval = setInterval(() => {
-                    if (position >= 100) {
-                        clearInterval(upInterval);
-                        let downInterval = setInterval(() => {
-                            if (position <= 0) {
-                                clearInterval(downInterval);
-                                isJumping = false;
-                            }
-                            position -= 3;
-                            player.style.bottom = position + 'px';
-                        }, 20);
-                    }
-                    position += 3;
-                    player.style.bottom = position + 'px';
-                }, 20);
-            }
+        function GFG_Fun() {
+
+            // Create anchor element.
+            let a = document.createElement('a');
+
+            // Create the text node for anchor element.
+            let link = document.createTextNode("This is link");
+
+            // Append the text node to anchor element.
+            a.appendChild(link);
+
+            // Set the title.
+            a.title = "This is Link";
+
+            // Set the href property.
+            a.href = "https://www.geeksforgeeks.org";
+
+            // Append the anchor element to the body.
+            document.body.appendChild(a);
         }
-
-        function createObstacle() {
-            if (!gameOver) {
-                const obstacle = document.createElement('div');
-                obstacle.classList.add('obstacle');
-                obstacle.style.left = '600px'; // Start from the right edge
-                gameContainer.appendChild(obstacle);
-
-                let position = 600;
-                let moveInterval = setInterval(() => {
-                    if (position < -20) {
-                        clearInterval(moveInterval);
-                        gameContainer.removeChild(obstacle);
-                        score++;
-                        scoreElement.textContent = `Score: ${score}`;
-                    } else {
-                        // Check collision
-                        const playerRect = player.getBoundingClientRect();
-                        const obstacleRect = obstacle.getBoundingClientRect();
-                        
-                        if (
-                            playerRect.left < obstacleRect.right &&
-                            playerRect.right > obstacleRect.left &&
-                            playerRect.top < obstacleRect.bottom &&
-                            playerRect.bottom > obstacleRect.top
-                        ) {
-                            clearInterval(moveInterval);
-                            gameOver = true;
-                            alert('Game Over! Score: ' + score);
-                        }
-
-                        position -= 5;
-                        obstacle.style.left = position + 'px';
-                    }
-                }, 20);
-            }
-        }
-
-        // Generate obstacles randomly with minimum 0.5s reaction time
-        function startGeneratingObstacles() {
-            const minInterval = 1500; // Minimum time between obstacles (1.5 seconds)
-            let lastObstacleTime = 0;
-
-            setInterval(() => {
-                const currentTime = Date.now();
-                if (currentTime - lastObstacleTime >= minInterval && !gameOver) {
-                    createObstacle();
-                    lastObstacleTime = currentTime;
-                }
-            }, 500);
-        }
-
-        document.addEventListener('keydown', (event) => {
-            if (event.code === 'Space') {
-                event.preventDefault();
-                jump();
-            }
-        });
-
-        startGeneratingObstacles();
     </script>
 </body>
+
 </html>

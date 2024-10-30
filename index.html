@@ -2,38 +2,37 @@
 <html>
 <head>
     <title>Jacky's Personal Webpage</title>
-    <style>
-        .container {
-            display: flex;
-            min-height: 100vh;
-            gap: 20px; /* space between columns */
-            padding: 20px;
-        }
-
-        .column {
-            padding: 20px;
-            background-color: #f0f0f0;
-        }
-
-        .side-column {
-            flex: 1; /* takes 1 part of the space */
-        }
-
-        .middle-column {
-            flex: 5; /* takes 2 parts of the space */
-        }
-    </style>
+    <link rel="stylesheet" href=".style.css">
+    <script src=".script.js" defer></script>
 </head>
 <body>
-    <div class="container">
-        <div class="column side-column">Left Column</div>
-        <div class="column middle-column">Middle Column</div>
-        <div class="column side-column">Right Column</div>
-    </div>
-    <h1>Jacky's Personal Webpage</h1>
-    <p>This is a paragraph.</p>
-    <script src="script.js" defer></script>
 
+    <h1 style="text-align: center;">Jacky's Personal Webpage</h1>
+    <div class="container">
+        <div class="column side-column">
+            <h2 style="text-align: center;">LeetCode</h2>
+            <ul>
+                <li><a href="https://huangjt97.github.io/Personal_Webpage/LeetCode/AplusB.cpp" target="_blank">A+B problem (For Testing)</a></li>
+                <li><a href="https://www.wikipedia.org" target="_blank">Wikipedia</a></li>
+                <li><a href="https://www.github.com" target="_blank">GitHub</a></li>
+                <li><a href="https://www.medium.com" target="_blank">Medium</a></li>
+                <li><a href="https://www.stackoverflow.com" target="_blank">Stack Overflow</a></li>
+
+            </ul>
+        </div>
+        <div class="column middle-column">
+            <div class="Mini_Projects">
+            </div>
+        </div>
+        <div class="column side-column">
+            <div class="Personal_Info">
+            </div>
+        </div>
+    </div>
+    <script>
+        document.get.ElementById("LeetCode").innerHTML = "LeetCode";
+    </script>
+    
 
 </body>
 </html>

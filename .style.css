@@ -1,0 +1,19 @@
+.container {
+    display: flex;
+    min-height: 100vh;
+    gap: 20px;
+    padding: 20px;
+}
+
+.column {
+    padding: 20px;
+    background-color: #fafafa;
+}
+
+.side-column {
+    flex: 1;
+}
+
+.middle-column {
+    flex: 5;
+}
