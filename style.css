@@ -39,6 +39,8 @@ body {
 
 .side-column-left {
     flex: 2;
+    display: grid;
+    grid-gap: 10px;
     border-radius: 10px; 
 }
 
@@ -49,5 +51,7 @@ body {
 
 .side-column-right {
     flex: 3;
+    display: grid;
+    grid-gap: 10px;
     border-radius: 10px; 
 }
